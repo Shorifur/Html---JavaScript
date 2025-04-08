@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Relativistic Time Dilation Calculator</title>
+    <style>
+        :root {
+            --primary: #3498db;
+            --secondary: #2c3e50;
+            --light: #ecf0f1;
+            --dark: #2c3e50;
+            --success: #2ecc71;
+            --warning: #f39c12;
+            --danger: #e74c3c;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f5f7fa;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background-color: var(--secondary);
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+            border-radius: 8px 8px 0 0;
+            margin-bottom: 20px;
+        }
+        
+        h1, h2, h3 {
+            margin: 0;
+        }
+        
+        .calculator {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            margin-bottom: 30px;
+        }
+        
+        .tabs {
+            display: flex;
+            background-color: var(--light);
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .tab {
+            padding: 12px 20px;
+            cursor: pointer;
+            flex: 1;
+            text-align: center;
+            transition: all 0.3s ease;
+            border-right: 1px solid #ddd;
+        }
+        
+        .tab:last-child {
+            border-right: none;
+        }
+        
+        .tab.active {
+            background-color: white;
+            font-weight: bold;
+            color: var(--primary);
+            border-bottom: 3px solid var(--primary);
+        }
+        
+        .tab-content {
+            padding: 25px;
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+            transition: border 0.3s;
+        }
+        
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+        }
+        
+        .input-group {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .input-group input {
+            flex: 1;
+        }
+        
+        .input-group select {
+            width: auto;
+            min-width: 100px;
+        }
+        
+        button {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: background-color 0.3s;
+            width: 100%;
+        }
+        
+        button:hover {
+            background-color: #2980b9;
+        }
+        
+        .result {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #e8f4fc;
+            border-radius: 8px;
+            border-left: 4px solid var(--primary);
+            display: none;
+        }
+        
+        .result h3 {
+            margin-top: 0;
+            color: var(--secondary);
+        }
+        
+        .result-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--primary);
+            margin: 10px 0;
+        }
+        
+        .formula {
+            font-family: 'Courier New', monospace;
+            background-color: #f8f9fa;
+            padding: 2px 6px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            font-size: 14px;
+        }
+        
+        .info-box {
+            background-color: #f8f9fa;
+            border-left: 4px solid var(--primary);
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 4px 4px 0;
+        }
+        
+        .info-box h4 {
+            margin-top: 0;
+            color: var(--secondary);
+        }
+        
+        .comparison {
+            margin-top: 20px;
+        }
+        
+        .comparison-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .comparison-item:last-child {
+            border-bottom: none;
+        }
+        
+        .comparison-label {
+            font-weight: 600;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+        
+        @media (max-width: 768px) {
+            .tabs {
+                flex-direction: column;
+            }
+            
+            .tab {
+                border-right: none;
+                border-bottom: 1px solid #ddd;
+            }
+            
+            .input-group {
+                flex-direction: column;
+            }
+            
+            .input-group select {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Advanced Relativistic Time Dilation Calculator</h1>
+            <p>Calculate time differences between travelers and stationary observers at near-light speeds</p>
+        </header>
+        
+        <div class="calculator">
+            <div class="tabs">
+                <div class="tab active" data-tab="earth-time">Earth Time Calculator</div>
+                <div class="tab" data-tab="required-speed">Required Speed Calculator</div>
+                <div class="tab" data-tab="distance">Distance Calculator</div>
+            </div>
+            
+            <div class="tab-content active" id="earth-time">
+                <div class="form-group">
+                    <label for="speed-input">Traveler's Speed:</label>
+                    <div class="input-group">
+                        <input type="number" id="speed-input" min="0" max="99.99999999999999999999" step="0.0001" value="99.99">
+                        <select id="speed-unit">
+                            <option value="percent">% of light speed</option>
+                            <option value="nines">Number of 9's</option>
+                        </select>
+                    </div>
+                    <div id="nines-input-container" style="display: none;">
+                        <input type="number" id="nines-input" min="1" max="20" value="4">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="travel-time-1">Traveler's Experienced Time:</label>
+                    <div class="input-group">
+                        <input type="number" id="travel-time-1" min="0" step="0.01" value="1">
+                        <select id="time-unit-1">
+                            <option value="seconds">Seconds</option>
+                            <option value="minutes" selected>Minutes</option>
+                            <option value="hours">Hours</option>
+                            <option value="days">Days</option>
+                            <option value="years">Years</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <button onclick="calculateEarthTime()">Calculate Earth Time</button>
+                
+                <div class="info-box">
+                    <h4>How it works</h4>
+                    <p>This calculates how much time passes on Earth when you travel at near-light speeds for a certain amount of your own experienced time.</p>
+                    <p>Formula: <span class="formula">Δt = γ × Δτ</span> where <span class="formula">γ = 1/√(1-v²/c²)</span></p>
+                </div>
+                
+                <div id="earth-time-result" class="result">
+                    <h3>Results</h3>
+                    <div class="result-value" id="earth-time-value"></div>
+                    <p>Lorentz factor (γ): <strong id="gamma-value"></strong></p>
+                    <div class="comparison">
+                        <div class="comparison-item">
+                            <span class="comparison-label">Traveler's time:</span>
+                            <span id="traveler-time-display"></span>
+                        </div>
+                        <div class="comparison-item">
+                            <span class="comparison-label">Earth time:</span>
+                            <span id="earth-time-display"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="tab-content" id="required-speed">
+                <div class="form-group">
+                    <label for="travel-time-2">Traveler's Experienced Time:</label>
+                    <div class="input-group">
+                        <input type="number" id="travel-time-2" min="0" step="0.01" value="1">
+                        <select id="time-unit-2">
+                            <option value="seconds">Seconds</option>
+                            <option value="minutes" selected>Minutes</option>
+                            <option value="hours">Hours</option>
+                            <option value="days">Days</option>
+                            <option value="years">Years</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="target-earth-time">Desired Earth Time:</label>
+                    <div class="input-group">
+                        <input type="number" id="target-earth-time" min="0" step="0.01" value="1">
+                        <select id="target-time-unit">
+                            <option value="seconds">Seconds</option>
+                            <option value="minutes">Minutes</option>
+                            <option value="hours">Hours</option>
+                            <option value="days">Days</option>
+                            <option value="years" selected>Years</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <button onclick="calculateRequiredSpeed()">Calculate Required Speed</button>
+                
+                <div class="info-box">
+                    <h4>How it works</h4>
+                    <p>This calculates the speed you need to travel at to experience a certain amount of time while a different amount of time passes on Earth.</p>
+                    <p>Formula: <span class="formula">v = c × √(1 - (Δτ/Δt)²)</span></p>
+                </div>
+                
+                <div id="required-speed-result" class="result">
+                    <h3>Results</h3>
+                    <div class="result-value" id="required-speed-value"></div>
+                    <p>Lorentz factor (γ): <strong id="required-gamma"></strong></p>
+                    <p>Number of 9's needed: <strong id="required-nines"></strong></p>
+                </div>
+            </div>
+            
+            <div class="tab-content" id="distance">
+                <div class="form-group">
+                    <label for="speed-input-distance">Traveler's Speed:</label>
+                    <div class="input-group">
+                        <input type="number" id="speed-input-distance" min="0" max="99.99999999999999999999" step="0.0001" value="99.99">
+                        <select id="speed-unit-distance">
+                            <option value="percent">% of light speed</option>
+                            <option value="nines">Number of 9's</option>
+                        </select>
+                    </div>
+                    <div id="nines-input-distance-container" style="display: none;">
+                        <input type="number" id="nines-input-distance" min="1" max="20" value="4">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="distance-input">Distance to Travel (light-years):</label>
+                    <input type="number" id="distance-input" min="0" step="0.01" value="1">
+                </div>
+                
+                <button onclick="calculateDistanceEffects()">Calculate Travel Effects</button>
+                
+                <div class="info-box">
+                    <h4>How it works</h4>
+                    <p>This calculates the time experienced by the traveler and observers when traveling a certain distance at near-light speeds.</p>
+                    <p>Formula for Earth time: <span class="formula">Δt = d/v</span></p>
+                    <p>Formula for traveler time: <span class="formula">Δτ = Δt/γ</span></p>
+                </div>
+                
+                <div id="distance-result" class="result">
+                    <h3>Results</h3>
+                    <p>Lorentz factor (γ): <strong id="distance-gamma"></strong></p>
+                    <div class="comparison">
+                        <div class="comparison-item">
+                            <span class="comparison-label">Earth time (one way):</span>
+                            <span id="earth-time-one-way"></span>
+                        </div>
+                        <div class="comparison-item">
+                            <span class="comparison-label">Traveler's time (one way):</span>
+                            <span id="traveler-time-one-way"></span>
+                        </div>
+                        <div class="comparison-item">
+                            <span class="comparison-label">Earth time (round trip):</span>
+                            <span id="earth-time-round-trip"></span>
+                        </div>
+                        <div class="comparison-item">
+                            <span class="comparison-label">Traveler's time (round trip):</span>
+                            <span id="traveler-time-round-trip"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="info-box">
+            <h4>About Relativistic Time Dilation</h4>
+            <p>According to Einstein's theory of special relativity, time passes slower for objects moving at high velocities relative to a stationary observer. This effect becomes significant as you approach the speed of light (c).</p>
+            <p>The Lorentz factor (γ) quantifies this time dilation. At everyday speeds, γ is nearly 1 and the effect is negligible. But at 99.9% of light speed, γ ≈ 22.4, meaning 1 year for the traveler equals 22.4 years on Earth.</p>
+        </div>
+        <footer>
+
+            <p>Relativistic Time Dilation Calculator | Based on Einstein's Special Relativity</p>
+            <p>Note: These calculations assume constant velocity and ignore acceleration effects.</p>
+            <p>&copy; 2023 Time Dilation Calculator</p>
+            <p>For educational purposes only. Always consult with a physicist for real-world applications.</p>
+            <p>My Name in Md Shorifur Rahman.And Please don't take it very seriously.It's not my best works </p>
+        
+        </footer>
+    </div>
+
+    <script>
+        // Tab switching
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                
+                tab.classList.add('active');
+                document.getElementById(tab.dataset.tab).classList.add('active');
+            });
+        });
+        
+        // Speed input type switching
+        document.getElementById('speed-unit').addEventListener('change', function() {
+            document.getElementById('nines-input-container').style.display = 
+                this.value === 'nines' ? 'block' : 'none';
+        });
+        
+        document.getElementById('speed-unit-distance').addEventListener('change', function() {
+            document.getElementById('nines-input-distance-container').style.display = 
+                this.value === 'nines' ? 'block' : 'none';
+        });
+        
+        // Helper functions
+        function convertToSeconds(value, unit) {
+            const minute = 60;
+            const hour = minute * 60;
+            const day = hour * 24;
+            const year = day * 365.25;
+            
+            switch(unit) {
+                case 'seconds': return value;
+                case 'minutes': return value * minute;
+                case 'hours': return value * hour;
+                case 'days': return value * day;
+                case 'years': return value * year;
+                default: return value;
+            }
+        }
+        
+        function formatTime(seconds) {
+            if (seconds < 60) return `${seconds.toFixed(2)} seconds`;
+            
+            const minutes = seconds / 60;
+            if (minutes < 60) return `${minutes.toFixed(2)} minutes`;
+            
+            const hours = minutes / 60;
+            if (hours < 24) return `${hours.toFixed(2)} hours`;
+            
+            const days = hours / 24;
+            if (days < 365.25) return `${days.toFixed(2)} days`;
+            
+            const years = days / 365.25;
+            if (years < 1000) return `${years.toFixed(2)} years`;
+            
+            if (years < 1e6) return `${(years/1000).toFixed(2)} thousand years`;
+            if (years < 1e9) return `${(years/1e6).toFixed(2)} million years`;
+            if (years < 1e12) return `${(years/1e9).toFixed(2)} billion years`;
+            return `${(years/1e12).toFixed(2)} trillion years`;
+        }
+        
+        function calculateLorentzFactor(speed) {
+            return 1 / Math.sqrt(1 - Math.pow(speed, 2));
+        }
+        
+        function calculateSpeedFromGamma(gamma) {
+            return Math.sqrt(1 - 1 / Math.pow(gamma, 2));
+        }
+        
+        function calculateNinesFromSpeed(speed) {
+            return -Math.log10(1 - speed);
+        }
+        
+        // Calculation functions
+        function calculateEarthTime() {
+            let speed;
+            const speedUnit = document.getElementById('speed-unit').value;
+            
+            if (speedUnit === 'percent') {
+                speed = parseFloat(document.getElementById('speed-input').value) / 100;
+            } else {
+                const nines = parseInt(document.getElementById('nines-input').value);
+                speed = 1 - Math.pow(10, -nines);
+            }
+            
+            const travelerTime = parseFloat(document.getElementById('travel-time-1').value);
+            const timeUnit = document.getElementById('time-unit-1').value;
+            
+            const travelerTimeSec = convertToSeconds(travelerTime, timeUnit);
+            const gamma = calculateLorentzFactor(speed);
+            const earthTimeSec = gamma * travelerTimeSec;
+            
+            const earthTimeYears = earthTimeSec / (60 * 60 * 24 * 365.25);
+            const nines = calculateNinesFromSpeed(speed);
+            
+            // Display results
+            document.getElementById('earth-time-value').textContent = 
+                `${formatTime(earthTimeSec)} pass on Earth`;
+            document.getElementById('gamma-value').textContent = gamma.toExponential(4);
+            document.getElementById('traveler-time-display').textContent = 
+                `${travelerTime} ${timeUnit}`;
+            document.getElementById('earth-time-display').textContent = 
+                formatTime(earthTimeSec);
+            
+            document.getElementById('earth-time-result').style.display = 'block';
+        }
+        
+        function calculateRequiredSpeed() {
+            const travelerTime = parseFloat(document.getElementById('travel-time-2').value);
+            const travelerTimeUnit = document.getElementById('time-unit-2').value;
+            const targetEarthTime = parseFloat(document.getElementById('target-earth-time').value);
+            const targetTimeUnit = document.getElementById('target-time-unit').value;
+            
+            const travelerTimeSec = convertToSeconds(travelerTime, travelerTimeUnit);
+            const targetEarthTimeSec = convertToSeconds(targetEarthTime, targetTimeUnit);
+            
+            const requiredGamma = targetEarthTimeSec / travelerTimeSec;
+            const requiredSpeed = calculateSpeedFromGamma(requiredGamma);
+            const nines = calculateNinesFromSpeed(requiredSpeed);
+            
+            // Display results
+            document.getElementById('required-speed-value').textContent = 
+                `${(requiredSpeed * 100).toFixed(Math.max(0, Math.ceil(nines)))}% of light speed`;
+            document.getElementById('required-gamma').textContent = requiredGamma.toExponential(4);
+            document.getElementById('required-nines').textContent = nines.toFixed(1);
+            
+            document.getElementById('required-speed-result').style.display = 'block';
+        }
+        
+        function calculateDistanceEffects() {
+            let speed;
+            const speedUnit = document.getElementById('speed-unit-distance').value;
+            
+            if (speedUnit === 'percent') {
+                speed = parseFloat(document.getElementById('speed-input-distance').value) / 100;
+            } else {
+                const nines = parseInt(document.getElementById('nines-input-distance').value);
+                speed = 1 - Math.pow(10, -nines);
+            }
+            
+            const distance = parseFloat(document.getElementById('distance-input').value);
+            
+            const gamma = calculateLorentzFactor(speed);
+            const earthTimeOneWayYears = distance / speed;
+            const travelerTimeOneWayYears = earthTimeOneWayYears / gamma;
+            
+            // Convert to seconds for formatting
+            const earthTimeOneWaySec = earthTimeOneWayYears * 365.25 * 24 * 60 * 60;
+            const travelerTimeOneWaySec = travelerTimeOneWayYears * 365.25 * 24 * 60 * 60;
+            
+            // Display results
+            document.getElementById('distance-gamma').textContent = gamma.toExponential(4);
+            document.getElementById('earth-time-one-way').textContent = formatTime(earthTimeOneWaySec);
+            document.getElementById('traveler-time-one-way').textContent = formatTime(travelerTimeOneWaySec);
+            document.getElementById('earth-time-round-trip').textContent = formatTime(earthTimeOneWaySec * 2);
+            document.getElementById('traveler-time-round-trip').textContent = formatTime(travelerTimeOneWaySec * 2);
+            
+            document.getElementById('distance-result').style.display = 'block';
+        }
+    </script>
+</body>
+</html>
